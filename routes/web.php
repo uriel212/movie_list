@@ -25,4 +25,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+    Route::get('/my_movies_list', function () {
+        return view('mylist');
+    })->name('movies_list');
 });
