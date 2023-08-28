@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('imdb_id');
             $table->string('title');
             $table->integer('year');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('type');
             $table->timestamps();
         });

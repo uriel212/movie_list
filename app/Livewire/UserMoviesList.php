@@ -2,22 +2,40 @@
 
 namespace App\Livewire;
 
-use App\Models\UserMovies;
+use App\Models\UserMoviesSeries;
 use Livewire\Component;
 
 class UserMoviesList extends Component
 {
+    public $filter = '';
 
-    public $movies;
-
-    public function mount()
+    public function applyFilter($type)
     {
-        // Fetch movies from the database
-        $this->movies = UserMovies::with('user', 'movie.ratings')->get();
+        $this->filter = $type;
+    }
+
+    public function getSeriesOrMovies() 
+    {
+        if ($this->filter == '') {
+            return UserMoviesSeries::with('user', 'movie_serie.ratings')->get();
+        } else {
+            return UserMoviesSeries::with('user', 'movie_serie.ratings')->whereHas('movie_serie', function ($query) {
+                $query->where('type', $this->filter);
+            })->get();
+        }
+    }
+
+    public function softDeleteMovie($movieId)
+    {
+        $userMovie = UserMoviesSeries::find($movieId);
+        if ($userMovie) {
+            $userMovie->delete();
+        }
     }
 
     public function render()
     {
-        return view('livewire.user-movies-list');
+        $movies = UserMoviesSeries::with('user', 'movie_serie.ratings')->get();
+        return view('livewire.user-movies-list', ['movies' => $movies]);
     }
 }

@@ -13,6 +13,6 @@ class MoviesSeries extends Model
 
     public function ratings()
     {
-        return $this->hasMany(Ratings::class);
+        return $this->hasMany(Ratings::class, 'movie_serie_id');
     }
 }

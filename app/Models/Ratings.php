@@ -13,6 +13,6 @@ class Ratings extends Model
     // Define the relationship with the Movie model
     public function movie_serie()
     {
-        return $this->belongsTo(MoviesSeries::class);
+        return $this->belongsTo(MoviesSeries::class, 'movie_serie_id');
     }
 }
