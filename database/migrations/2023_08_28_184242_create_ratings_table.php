@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('movies', function (Blueprint $table) {
+        Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->string('imdb_id');
-            $table->string('title');
-            $table->integer('year');
-            $table->string('image');
+            $table->unsignedBigInteger('movie_serie_id'); // Foreign key to link to movies table
+            $table->string('source');
+            $table->string('value');
             $table->timestamps();
+
+            $table->foreign('movie_serie_id')->references('id')->on('movies_series')->onDelete('cascade');
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('movies');
+        Schema::dropIfExists('ratings');
     }
 };

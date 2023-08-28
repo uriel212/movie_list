@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MovieRatings extends Model
+class Ratings extends Model
 {
     use HasFactory;
-    protected $fillable = ['movie_id', 'source', 'value'];
+    protected $fillable = ['movie_serie_id', 'source', 'value'];
 
     // Define the relationship with the Movie model
-    public function movie()
+    public function movie_serie()
     {
-        return $this->belongsTo(Movie::class);
+        return $this->belongsTo(MoviesSeries::class);
     }
 }

@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Movie extends Model
+class MoviesSeries extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['imdb_id','title', 'year', 'image'];
+    protected $fillable = ['imdb_id','title', 'year', 'image', 'type'];
 
     public function ratings()
     {
-        return $this->hasMany(MovieRatings::class);
+        return $this->hasMany(Ratings::class);
     }
 }
