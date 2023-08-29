@@ -31,7 +31,7 @@ class MovieModal extends Component
 
         $response = Http::get($url);
         $this->movieData = $response->json();
-        
+        $this->verifyIfMovieIsInMyList();
     }
 
     public function addToMyList()
@@ -88,27 +88,36 @@ class MovieModal extends Component
     public function verifyIfMovieIsInMyList()
     {
         //Getting the movie if exists in the movie_serie table
-        $movie_serie = MoviesSeries::where('imdb_id', $this->movieData['imdbID'])->first();
-        if($movie_serie){
-            $userMovieSerie = UserMoviesSeries::where('user_id', auth()->user()->id)
-            ->where('movie_serie_id', $movie_serie->id)
-            ->first();
-            if ($userMovieSerie) {
-                $this->addMovie = false;
-            } else {
-                $this->addMovie = true;
-            }
-        }  
+        if($this->movieData) {
+            $movie_serie = MoviesSeries::where('imdb_id', $this->movieData['imdbID'])->first();
+                if ($movie_serie) {
+                    $userMovieSerie = UserMoviesSeries::where('user_id', auth()->user()->id)
+                        ->where('movie_serie_id', $movie_serie->id)
+                        ->exists();
+                
+                    $this->addMovie = !$userMovieSerie;
+                } 
+        }
+    }
+
+    public function softDeleteMovie()
+    {
+        $userMovie = UserMoviesSeries::find($this->movieId);
+        if ($userMovie) {
+            $userMovie->delete();
+        }
     }
 
     public function closeModal()
     {
         $this->movieData  = null;
         $this->movieId = null;
+        $this->addMovie = false;
     }
 
     public function render()
     {
+        $this->verifyIfMovieIsInMyList();
         return view('livewire.movie-modal');
     }
 }

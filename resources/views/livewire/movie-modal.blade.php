@@ -14,6 +14,8 @@
                 @endforeach
                 @if($addMovie)
                     <button wire:click="addToMyList" >Add to my List</button>
+                @else 
+                    <button wire:click="softDeleteMovie" >Remove from my List</button>
                 @endif
                 
                 <button wire:click="closeModal">Close</button>
