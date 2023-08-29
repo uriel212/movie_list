@@ -7,6 +7,7 @@ use App\Models\Ratings;
 use App\Models\UserMoviesSeries;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
+use Livewire\Livewire;
 
 class MovieModal extends Component
 {
@@ -77,7 +78,7 @@ class MovieModal extends Component
                     'user_id' => auth()->user()->id,
                     'movie_serie_id' => $movie_serie->id
                 ]);
-                $this->movieData = null;
+                $this->movieData = null; 
             } else {
                 //If the movie exists we return an message
                 return redirect()->back()->with('movieAdded', 'Movie already on your list.');
@@ -102,10 +103,15 @@ class MovieModal extends Component
 
     public function softDeleteMovie()
     {
-        $userMovie = UserMoviesSeries::find($this->movieId);
+        $movie_delete = MoviesSeries::where('imdb_id', $this->movieData['imdbID'])->first();
+
+        $userMovie = UserMoviesSeries::where('movie_serie_id',$movie_delete->id)
+        ->where('user_id', auth()->user()->id)
+        ->first();
         if ($userMovie) {
             $userMovie->delete();
         }
+        $this->closeModal();
     }
 
     public function closeModal()
