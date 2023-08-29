@@ -13,6 +13,7 @@ class MovieModal extends Component
 
     public $movieId;
     public $movieData;
+    public $addMovie = true;
 
     // protected $listeners = ['modalOpened' => 'updateMovieId'];
 
@@ -48,17 +49,23 @@ class MovieModal extends Component
                     'image' => $this->movieData['Poster'],
                     'type' => $this->movieData['Type']
                 ]);
-            }
+            } 
 
-            $ratings = $this->movieData['Ratings'];
+            //check if the movie has ratings
+            $ratings = Ratings::where('movie_serie_id', $movie_serie->id)->get();
 
-            foreach ($ratings as $rating) {
-                Ratings::create([
-                    'movie_serie_id' => $movie_serie->id,
-                    'source' => $rating['Source'],
-                    'value' => $rating['Value']
-                ]);
+            if($ratings->count() == 0){
+                $ratings = $this->movieData['Ratings'];
+            
+                foreach ($ratings as $rating) {
+                    Ratings::create([
+                        'movie_serie_id' => $movie_serie->id,
+                        'source' => $rating['Source'],
+                        'value' => $rating['Value']
+                    ]);
+                }
             }
+            
 
             //First we verify if the user has the movie on his list
             $userMovieSerie = UserMoviesSeries::where('user_id', auth()->user()->id)
@@ -70,15 +77,28 @@ class MovieModal extends Component
                     'user_id' => auth()->user()->id,
                     'movie_serie_id' => $movie_serie->id
                 ]);
+                $this->movieData = null;
+            } else {
+                //If the movie exists we return an message
+                return redirect()->back()->with('movieAdded', 'Movie already on your list.');
             }
-
-            // Reset the fetched API data
-            $this->movieData = null;
-
-            // Emit a success message
-            // $this->emit('movieAdded', 'Movie added to your list.');
-            // Session::flash('movieAdded', 'Movie added to your list.');
         }
+    }
+
+    public function verifyIfMovieIsInMyList()
+    {
+        //Getting the movie if exists in the movie_serie table
+        $movie_serie = MoviesSeries::where('imdb_id', $this->movieData['imdbID'])->first();
+        if($movie_serie){
+            $userMovieSerie = UserMoviesSeries::where('user_id', auth()->user()->id)
+            ->where('movie_serie_id', $movie_serie->id)
+            ->first();
+            if ($userMovieSerie) {
+                $this->addMovie = false;
+            } else {
+                $this->addMovie = true;
+            }
+        }  
     }
 
     public function closeModal()

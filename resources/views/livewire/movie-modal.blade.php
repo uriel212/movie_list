@@ -12,7 +12,10 @@
                 @foreach ($movieData['Ratings'] as $rating)
                     <p>{{ $rating['Source'] }}: {{ $rating['Value'] }}</p>
                 @endforeach
-                <button wire:click="addToMyList" >Add to my List</button>
+                @if($addMovie)
+                    <button wire:click="addToMyList" >Add to my List</button>
+                @endif
+                
                 <button wire:click="closeModal">Close</button>
 
             @endif

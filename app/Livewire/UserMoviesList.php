@@ -35,7 +35,7 @@ class UserMoviesList extends Component
 
     public function render()
     {
-        $movies = UserMoviesSeries::with('user', 'movie_serie.ratings')->get();
+        $movies = $this->getSeriesOrMovies();
         return view('livewire.user-movies-list', ['movies' => $movies]);
     }
 }
