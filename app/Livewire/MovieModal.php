@@ -6,6 +6,7 @@ use App\Models\MoviesSeries;
 use App\Models\Ratings;
 use App\Models\UserMoviesSeries;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\Livewire;
 
@@ -69,10 +70,12 @@ class MovieModal extends Component
             
 
             //First we verify if the user has the movie on his list
-            $userMovieSerie = UserMoviesSeries::where('user_id', auth()->user()->id)
+            $userMovieSerie = UserMoviesSeries::withTrashed()
+                ->where('user_id', auth()->user()->id)
                 ->where('movie_serie_id', $movie_serie->id)
                 ->first();
             //Adding the movie to the user's list if it doesn't exist
+            Log::info('Soy la pelicula encontrada ' . $userMovieSerie);
             if (!$userMovieSerie) {
                 UserMoviesSeries::create([
                     'user_id' => auth()->user()->id,
@@ -81,7 +84,8 @@ class MovieModal extends Component
                 $this->movieData = null; 
             } else {
                 //If the movie exists we return an message
-                return redirect()->back()->with('movieAdded', 'Movie already on your list.');
+                $userMovieSerie->restore();
+                $this->movieData = null;
             }
         }
     }

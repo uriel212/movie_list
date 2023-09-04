@@ -30,6 +30,6 @@
         </div>
     </div>
     @else
-    <p>You don't have any movies on your list yet.</p>
+    <p>You don't have any movies/series on your list yet.</p>
     @endif
 </div>

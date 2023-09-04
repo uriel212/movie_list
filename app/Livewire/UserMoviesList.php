@@ -17,11 +17,16 @@ class UserMoviesList extends Component
     public function getSeriesOrMovies() 
     {
         if ($this->filter == '') {
-            return UserMoviesSeries::with('user', 'movie_serie.ratings')->get();
+            return UserMoviesSeries::where('user_id', auth()->user()->id)
+            ->with('user', 'movie_serie.ratings')
+            ->get();
         } else {
-            return UserMoviesSeries::with('user', 'movie_serie.ratings')->whereHas('movie_serie', function ($query) {
+            return UserMoviesSeries::where('user_id', auth()->user()->id)
+            ->with('user', 'movie_serie.ratings')
+            ->whereHas('movie_serie', function ($query) {
                 $query->where('type', $this->filter);
-            })->get();
+            })
+            ->get();
         }
     }
 
